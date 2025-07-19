@@ -1,0 +1,9 @@
+name=[B42] Barricaded World - Extended Erosion
+id=BarricadedWorld
+author=vexiate
+poster=poster.png
+icon=icon.png
+description=Most existing house windows in the world will be broken and randomly barricaded
+modversion=2.0.0
+versionMin=42.0.0
+url=https://github.com/Terrahop/zomboid-barricadedworld

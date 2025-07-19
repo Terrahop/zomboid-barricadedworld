@@ -1,0 +1,27 @@
+Sandbox_EN = {
+    Sandbox_BarricadedWorld = "Barricaded World",
+
+    Sandbox_BarricadedWorld_UseErosion = "Use Erosion Level",
+    Sandbox_BarricadedWorld_UseErosion_tooltip = "Whether to consider current erosion level. The further along erosion is, the more likely the following chances are applied.",
+
+    Sandbox_BarricadedWorld_Garage = "Garage break chance",
+    Sandbox_BarricadedWorld_Garage_tooltip = "Chance for a garage door to be broken",
+
+    Sandbox_BarricadedWorld_ExteriorDoor = "Exterior Door Break Chance",
+    Sandbox_BarricadedWorld_ExteriorDoor_tooltip = "Chance for an exterior door to be broken",
+
+    Sandbox_BarricadedWorld_ExteriorDoorBarricade = "Exterior Door Barricade Chance",
+    Sandbox_BarricadedWorld_ExteriorDoorBarricade_tooltip = "Chance for an exterior door to be barricaded, note this happens after the check for a door to broken",
+
+    Sandbox_BarricadedWorld_InteriorDoor = "Interior Door Break Chance",
+    Sandbox_BarricadedWorld_InteriorDoor_tooltip = "Chance for an interior door to be broken",
+
+    Sandbox_BarricadedWorld_Window = "Window Break Chance",
+    Sandbox_BarricadedWorld_Window_tooltip = "Chance for a window to be broken",
+
+    Sandbox_BarricadedWorld_WindowBarricade = "Window Barricade Chance",
+    Sandbox_BarricadedWorld_WindowBarricade_tooltip = "Chance for a window to be barricaded",
+
+    Sandbox_BarricadedWorld_WindowBarricadeMetal = "Window Metal Barricade Chance",
+    Sandbox_BarricadedWorld_WindowBarricadeMetal_tooltip = "Chance for a window to be barricaded with a metal sheet instead of wood",
+}

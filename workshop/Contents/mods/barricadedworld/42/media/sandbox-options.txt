@@ -1,0 +1,80 @@
+VERSION = 1,
+
+option BarricadedWorld.UseErosion
+{
+    type = boolean,
+    default = true,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_UseErosion,
+}
+
+option BarricadedWorld.Garage
+{
+    type = integer,
+    min = 0,
+    default = 10,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_Garage,
+}
+
+option BarricadedWorld.ExteriorDoor
+{
+    type = integer,
+    min = 0,
+    default = 20,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_ExteriorDoor,
+}
+
+option BarricadedWorld.ExteriorDoorBarricade
+{
+    type = integer,
+    min = 0,
+    default = 10,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_ExteriorDoorBarricade,
+}
+
+option BarricadedWorld.InteriorDoor
+{
+    type = integer,
+    min = 0,
+    default = 10,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_InteriorDoor,
+}
+
+option BarricadedWorld.Window
+{
+    type = integer,
+    min = 0,
+    default = 40,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_Window,
+}
+
+
+option BarricadedWorld.WindowBarricade
+{
+    type = integer,
+    min = 0,
+    default = 20,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_WindowBarricade,
+}
+
+option BarricadedWorld.WindowBarricadeMetal
+{
+    type = integer,
+    min = 0,
+    default = 6,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_WindowBarricadeMetal,
+}
