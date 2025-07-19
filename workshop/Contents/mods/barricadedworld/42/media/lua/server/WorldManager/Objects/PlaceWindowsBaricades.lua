@@ -61,7 +61,7 @@ function PlaceWindowsBaricades.loadGridsquare(sq)
                     isMetal = true,
                     isMetalBar = false,
                     itemID =
-                    'Base.MetalBar',
+                    "Base.MetalBar",
                     condition = 10,
                     amount = 1
                   }
@@ -143,7 +143,7 @@ function PlaceWindowsBaricades.getBarricadeAble(x, y, z, index)
   local sq = getCell():getGridSquare(x, y, z)
   if sq and index >= 0 and index < sq:getObjects():size() then
     o = sq:getObjects():get(index)
-    if instanceof(o, 'BarricadeAble') then
+    if instanceof(o, "BarricadeAble") then
       return o
     end
   end
@@ -160,14 +160,17 @@ function PlaceWindowsBaricades.placeBarricade(args, object, barricadeLocation)
       barricade:addMetal(nil, metal)
       barricade:transmitCompleteItemToClients()
       if isServer() then
-        barricade:sendObjectChange('state')
+        barricade:sendObjectChange("state")
       end
     elseif args.isMetalBar then
       local metal = instanceItem("Base.MetalBar")
       metal:setCondition(args.condition)
       barricade:addMetalBar(nil, metal)
       barricade:transmitCompleteItemToClients()
-      barricade:sendObjectChange('state')
+
+      if isServer() then
+        barricade:sendObjectChange("state")
+      end
     else
       local plank = instanceItem("Base.Plank")
 
@@ -178,7 +181,7 @@ function PlaceWindowsBaricades.placeBarricade(args, object, barricadeLocation)
           if barricade:getNumPlanks() == 1 then
             barricade:transmitCompleteItemToClients()
           else
-            barricade:sendObjectChange('state')
+            barricade:sendObjectChange("state")
           end
         end
       end
