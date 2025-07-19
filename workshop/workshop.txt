@@ -1,6 +1,6 @@
 version=1
 id=3529472651
-title=[B42] Barricaded World
+title=[B42] Barricaded World - Extended Erosion (Error Fix)
 description=Stub
 tags=Build 42
 visibility=private
