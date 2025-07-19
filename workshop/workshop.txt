@@ -1,6 +1,16 @@
 version=1
 id=3529472651
 title=[B42] Barricaded World - Extended Erosion (Error Fix)
-description=Stub
+description=[h3] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935] Original Mod [/url] by Onkeen, with fixes included thanks to [url=https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052] Amenophis  [/url] [/h3]
+description=
+description=[h3] [i] This version also exposes sandbox options for tweaking chances. It also adds a chance for garages to be broken that can also be changed.  [/i] [/h3]
+description=
+description=NOTE: Garages sometimes don't fully break, only parts of the garage door break, I'm not knowledgeable enough on Zomboids lua api yet to figure out whats going on.
+description=
+description=See original mod for description. Some default values have been changed, check the sandbox options for updated defaults.
+description=
+description=
+description=Workshop ID: 3529472651
+description=Mod ID: BarricadedWorld
 tags=Build 42
 visibility=private
