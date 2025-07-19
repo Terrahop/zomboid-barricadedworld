@@ -167,7 +167,10 @@ function PlaceWindowsBaricades.placeBarricade(args, object, barricadeLocation)
       metal:setCondition(args.condition)
       barricade:addMetalBar(nil, metal)
       barricade:transmitCompleteItemToClients()
+
+      if isServer() then
       barricade:sendObjectChange('state')
+      end
     else
       local plank = instanceItem("Base.Plank")
 
