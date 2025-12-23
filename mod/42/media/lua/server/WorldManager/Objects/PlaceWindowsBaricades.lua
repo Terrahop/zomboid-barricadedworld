@@ -98,26 +98,26 @@ function PlaceWindowsBaricades.loadGridsquare(sq)
             if (ZombRand(0, 100) < CurrentErosionPercentage) or (not options.UseErosion) then
               local random = ZombRand(0, 100)
 
-              if tileIsoObject:getSprite():getProperties():Is("GarageDoor") then
-                if (random >= optionChance(options.Garage)) then
+              -- if tileIsoObject:getSprite():getProperties():Is("GarageDoor") then
+              --   if (random >= optionChance(options.Garage)) then
+              --     tileIsoObject:destroy()
+              --     break
+              --   end
+              -- else
+              if tileIsoObject:isExteriorDoor(nil) then
+                if (random >= optionChance(options.ExteriorDoor)) then
+                  tileIsoObject:destroy()
+                  break
+                elseif (ZombRand(0, 100) >= optionChance(options.ExteriorDoorBarricade)) then
+                  tileIsoObject:addRandomBarricades()
+                end
+              else
+                if (random >= optionChance(options.InteriorDoor)) then
                   tileIsoObject:destroy()
                   break
                 end
-              else
-                if tileIsoObject:isExteriorDoor(nil) then
-                  if (random >= optionChance(options.ExteriorDoor)) then
-                    tileIsoObject:destroy()
-                    break
-                  elseif (ZombRand(0, 100) >= optionChance(options.ExteriorDoorBarricade)) then
-                    tileIsoObject:addRandomBarricades()
-                  end
-                else
-                  if (random >= optionChance(options.InteriorDoor)) then
-                    tileIsoObject:destroy()
-                    break
-                  end
-                end
               end
+              -- end
             end
 
             if CurrentErosionPercentage > 100 then
