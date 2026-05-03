@@ -22,7 +22,7 @@ option BarricadedWorld.ExteriorDoorBreak
 {
     type = integer,
     min = 0,
-    default = 50,
+    default = 40,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_ExteriorDoorBreak,
@@ -42,7 +42,7 @@ option BarricadedWorld.InteriorDoorBreak
 {
     type = integer,
     min = 0,
-    default = 40,
+    default = 30,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_InteriorDoorBreak,
@@ -83,7 +83,7 @@ option BarricadedWorld.WindowBarricadeMetalBar
 {
     type = integer,
     min = 0,
-    default = 20,
+    default = 15,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_WindowBarricadeMetalBar,
@@ -96,7 +96,7 @@ option BarricadedWorld.zMax
     default = 16,
     max = 32,
     page = BarricadedWorld,
-    translation = BarricadedWorld_zMax,
+    translation = BarricadedWorld_ZMax,
 }
 
 option BarricadedWorld.zMin
@@ -106,5 +106,14 @@ option BarricadedWorld.zMin
     default = -16,
     max = 0,
     page = BarricadedWorld,
-    translation = BarricadedWorld_zMin,
+    translation = BarricadedWorld_ZMin,
+}
+
+
+option BarricadedWorld.OnlyOnce
+{
+    type = boolean,
+    default = false,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_OnlyOnce,
 }
