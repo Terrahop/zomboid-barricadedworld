@@ -2,212 +2,221 @@
 -- Properties
 --
 
-PlaceWindowsBaricades = {};
-ErosionSpeedValues = { 20, 50, 100, 200, 500 }
-TimeSinceApoValues = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360 }
-CurrentErosionPercentage = 0
-CurrentWorldAgeDays = 0
+BarricadedWorld = {
+  ErosionSpeedValues = { 20, 50, 100, 200, 500 },
+  TimeSinceApoValues = { 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360 },
+  CurrentErosionPercentage = 0,
+  CurrentWorldAgeDays = 0,
+}
+PlaceWindowsBaricades = {}
 
-local function optionChance(option)
-  return 100 - option
+---@enum BarricadeType
+local BarricadeType = {
+  MetalSheet = "Base.SheetMetal",
+  MetalBar = "Base.MetalBar",
+}
+
+---@enum OModData
+local IModData = {
+  IsParsed = "BarricadedWorld:isDefinitiveParsed",
+  IsPlayerPlaced = "BarricadedWorld:isPlayerPlaced",
+  ParsedDay = "BarricadedWorld:parsedDay",
+}
+
+local function logger(message, severity)
+  print("[BarricadedWorld] " .. (severity or "INFO: ") .. message)
 end
 
--- Methods
+--
+-- Properties
+--
 
-function PlaceWindowsBaricades.loadGridsquare(sq)
-  if isClient() == false then
-    local options = SandboxVars.BarricadedWorld
+---@param grid_square IsoGridSquare
+function PlaceWindowsBaricades.loadGridsquare(grid_square)
+  if isClient() == true then
+    return
+  end
 
-    for i = 0, sq:getObjects():size() - 1 do
-      local tileIsoObject = sq:getObjects():get(i);
+  --- @type {
+  --- WindowBreak: integer, WindowBarricade: integer, WindowBarricadeMetal: integer, WindowBarricadeMetalBar: integer,
+  --- ExteriorDoorBreak: integer, ExteriorDoorBarricade: integer, InteriorDoorBreak: integer,
+  --- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer }
+  --- }
+  local options = SandboxVars.BarricadedWorld
 
-      if tileIsoObject then
-        -- Searching for windows
-        if instanceof(tileIsoObject, "IsoWindow") then
-          local modData = tileIsoObject:getModData()
+  local square_z = grid_square:getZ()
 
-          -- If the window have not been loaded for the past 30 days, retry Barricaded World code
-          if (not modData["BarricadedWorld:isDefinitiveParsed"])
-              and (not modData["BarricadedWorld:isPlayerPlaced"])
-              and (not modData["BarricadedWorld:parsedDate"] or modData["BarricadedWorld:parsedDate"] + 30 < CurrentWorldAgeDays) then
-            local coords = { x = sq:getX(), y = sq:getY(), z = sq:getZ() }
-            object = PlaceWindowsBaricades.getBarricadeAble(coords.x, coords.y, coords.z, tileIsoObject:getObjectIndex());
+  if (square_z < options.zMin) or (square_z > options.zMax) then
+    return
+  end
 
-            -- The more advanced the erosion, the more chances the following code has to happen.
-            -- 25% of current erosion advancement means 25% chance for a windows to go through the Barricaded World code.
-            if object and (ZombRand(0, 100) < CurrentErosionPercentage or (not options.UseErosion)) then
-              if ZombRand(0, 100) >= optionChance(options.Window) then
-                object:smashWindow()
-              end
+  local square_objects = grid_square:getObjects()
+  local square_objects_size = square_objects:size()
 
-              if coords.z == 0 then
-                local args = {}
-                local randomBaricadeLocation = ZombRand(0, 4)
-                local barricadeLocation = true
+  if square_objects_size == 0 then
+    return
+  end
 
-                if (randomBaricadeLocation > 2) then
-                  barricadeLocation = false
-                end
+  for i = 0, square_objects_size - 1 do
+    local tileIsoObject = square_objects:get(i)
 
-                local random = ZombRand(0, 100)
+    if not tileIsoObject then
+      break
+    end
 
-                if (random >= optionChance(options.WindowBarricadeMetal)) then
-                  -- print("This window has metal sheet")
-                  local args = {
-                    x = coords.x,
-                    y = coords.y,
-                    z = coords.z,
-                    index = i,
-                    isMetal = true,
-                    isMetalBar = false,
-                    itemID =
-                    "Base.MetalBar",
-                    condition = 10,
-                    amount = 1
-                  }
-                  PlaceWindowsBaricades.placeBarricade(args, object, barricadeLocation);
-                elseif (random >= optionChance(options.WindowBarricade)) then
-                  -- print("This window random planks")
-                  tileIsoObject:addRandomBarricades()
-                end
-              end
-            end
+    local modData = tileIsoObject:getModData()
 
-            if CurrentErosionPercentage > 100 then
-              modData["BarricadedWorld:isDefinitiveParsed"] = true
-              tileIsoObject:transmitModData()
-            end
+    -- Don't run on player built objects
+    if modData[IModData.IsPlayerPlaced] then
+      break
+    end
+
+    -- If the window or door has been loaded in the past 30 days, cancel barricaded world.
+    if
+        modData[IModData.IsParsed]
+        or (modData[IModData.ParsedDay] and modData[IModData.ParsedDay] + 30 >= BarricadedWorld.CurrentWorldAgeDays)
+    then
+      break
+    end
+
+    if instanceof(tileIsoObject, "IsoWindow") then
+      ---@cast tileIsoObject IsoWindow We know the IsObject is a window here
+
+      if not instanceof(tileIsoObject, "BarricadeAble") then
+        break
+      end
+
+      -- The more advanced the erosion, the more chances the following code has to happen.
+      -- 25% of current erosion advancement means 25% chance for a windows to go through the Barricaded World code.
+      if ZombRand(100) < BarricadedWorld.CurrentErosionPercentage or not options.UseErosion then
+        if ZombRand(100) < options.WindowBreak then
+          tileIsoObject:setSmashed(true)
+          grid_square:addBrokenGlass();
+          tileIsoObject:sendObjectChange(IsoObjectChange.STATE)
+        end
+
+        -- local randomBaricadeLocation = ZombRand(4)
+        -- local barricadeLocation = randomBaricadeLocation <= 2
+
+        local random = ZombRand(100)
+
+        if random < options.WindowBarricadeMetal then
+          local metalType = BarricadeType.MetalSheet
+
+          if ZombRand(100) < options.WindowBarricadeMetalBar then
+            metalType = BarricadeType.MetalBar
           end
 
-          modData["BarricadedWorld:parsedDate"] = CurrentWorldAgeDays
-          tileIsoObject:transmitModData()
-
-          break -- Can't be both a window and a door, we found what we searched, stop the loop to gain performances
-        elseif instanceof(tileIsoObject, "IsoDoor") then
-          local tileModData = tileIsoObject:getModData()
-
-          -- If the door have not been loaded for the past 30 days, retry Barricaded World code
-          if (not tileModData["BarricadedWorld:isDefinitiveParsed"])
-              and (not tileModData["BarricadedWorld:isPlayerPlaced"])
-              and (
-                not tileModData["BarricadedWorld:parsedDate"]
-                or tileModData["BarricadedWorld:parsedDate"] + 30 < CurrentWorldAgeDays
-              ) then
-            -- The more advanced the erosion, the more chances the following code has to happen.
-            -- 25% of current erosion advancement means 25% chance for a windows to go through the Barricaded World code.
-            if (ZombRand(0, 100) < CurrentErosionPercentage) or (not options.UseErosion) then
-              local random = ZombRand(0, 100)
-
-              -- if tileIsoObject:getSprite():getProperties():Is("GarageDoor") then
-              --   if (random >= optionChance(options.Garage)) then
-              --     tileIsoObject:destroy()
-              --     break
-              --   end
-              -- else
-              if tileIsoObject:isExteriorDoor(nil) then
-                if (random >= optionChance(options.ExteriorDoor)) then
-                  tileIsoObject:destroy()
-                  break
-                elseif (ZombRand(0, 100) >= optionChance(options.ExteriorDoorBarricade)) then
-                  tileIsoObject:addRandomBarricades()
-                end
-              else
-                if (random >= optionChance(options.InteriorDoor)) then
-                  tileIsoObject:destroy()
-                  break
-                end
-              end
-              -- end
-            end
-
-            if CurrentErosionPercentage > 100 then
-              tileModData["BarricadedWorld:isDefinitiveParsed"] = true
-              tileIsoObject:transmitModData()
-            end
-          end
-
-          tileModData["BarricadedWorld:parsedDate"] = CurrentWorldAgeDays
-          tileIsoObject:transmitModData()
-          break -- Can't be both a window and a door, we found what we searched, stop the loop to gain performances
+          local args = {
+            index = i,
+            type = metalType,
+            condition = 10,
+          }
+          PlaceWindowsBaricades.placeMetalBarricade(args, tileIsoObject)
+        elseif random < options.WindowBarricade then
+          tileIsoObject:addRandomBarricades()
         end
       end
+
+      if BarricadedWorld.CurrentErosionPercentage > 100 then
+        modData[IModData.IsParsed] = true
+      end
+
+      modData[IModData.ParsedDay] = BarricadedWorld.CurrentWorldAgeDays
+      tileIsoObject:transmitModData()
+
+      break
+    elseif instanceof(tileIsoObject, "IsoDoor") then
+      ---@cast tileIsoObject IsoDoor We know the IsObject is a door here
+
+      local tileModData = tileIsoObject:getModData()
+
+      -- The more advanced the erosion, the more chances the following code has to happen.
+      -- 25% of current erosion advancement means 25% chance for a windows to go through the Barricaded World code.
+      if (ZombRand(100) < BarricadedWorld.CurrentErosionPercentage) or not options.UseErosion then
+        local random = ZombRand(100)
+
+        if tileIsoObject:getProperties():has(IsoPropertyType.GARAGE_DOOR) then
+          if random < options.GarageBreak then
+            tileIsoObject:destroy()
+          end
+        elseif tileIsoObject:isOutside() then
+          if random < options.ExteriorDoorBreak then
+            tileIsoObject:destroy()
+          elseif random < options.ExteriorDoorBarricade then
+            tileIsoObject:addRandomBarricades()
+          end
+        else
+          if random < options.InteriorDoorBreak then
+            tileIsoObject:destroy()
+          end
+        end
+      end
+
+      if BarricadedWorld.CurrentErosionPercentage > 100 then
+        tileModData[IModData.IsParsed] = true
+      end
+
+      tileModData[IModData.ParsedDay] = BarricadedWorld.CurrentWorldAgeDays
+      tileIsoObject:transmitModData()
+
+      break
     end
   end
 end
 
-function PlaceWindowsBaricades.isGettable(sq, i)
-  return sq:getObjects():get(i)
-end
-
-function PlaceWindowsBaricades.getBarricadeAble(x, y, z, index)
-  local sq = getCell():getGridSquare(x, y, z)
-  if sq and index >= 0 and index < sq:getObjects():size() then
-    o = sq:getObjects():get(index)
-    if instanceof(o, "BarricadeAble") then
-      return o
-    end
-  end
-  return nil
-end
-
-function PlaceWindowsBaricades.placeBarricade(args, object, barricadeLocation)
-  local barricade = IsoBarricade.AddBarricadeToObject(object, barricadeLocation)
+---@param args {index: integer, type: string, condition: integer}
+---@param object BarricadeAble
+function PlaceWindowsBaricades.placeMetalBarricade(args, object)
+  local barricade = IsoBarricade.AddBarricadeToObject(object, false)
 
   if barricade then
-    if args.isMetal then
-      local metal = instanceItem("Base.SheetMetal")
-      metal:setCondition(args.condition)
-      barricade:addMetal(nil, metal)
-      barricade:transmitCompleteItemToClients()
-      if isServer() then
-        barricade:sendObjectChange("state")
-      end
-    elseif args.isMetalBar then
-      local metal = instanceItem("Base.MetalBar")
-      metal:setCondition(args.condition)
-      barricade:addMetalBar(nil, metal)
-      barricade:transmitCompleteItemToClients()
-
-      if isServer() then
-        barricade:sendObjectChange("state")
-      end
-    else
-      local plank = instanceItem("Base.Plank")
-
-      for i = 0, args.amount - 1 do
-        barricade:addPlank(nil, plank)
-
-        if isServer() then
-          if barricade:getNumPlanks() == 1 then
-            barricade:transmitCompleteItemToClients()
-          else
-            barricade:sendObjectChange("state")
-          end
-        end
-      end
+    local metal = instanceItem(args.type)
+    if not metal then
+      logger("Could not find metal to barricade with", "ERROR")
+      return
     end
+
+    if args.type == BarricadeType.MetalSheet then
+      ---@diagnostic disable-next-line: param-type-mismatch
+      barricade:addMetal(nil, metal)
+    elseif args.type == BarricadeType.MetalBar then
+      ---@diagnostic disable-next-line: param-type-mismatch
+      barricade:addMetalBar(nil, metal)
+    end
+
+    barricade:transmitCompleteItemToClients()
+    barricade:sendObjectChange(IsoObjectChange.STATE)
   end
-  -- else print("No barricade location found");
 end
 
 function PlaceWindowsBaricades.onObjectAdded(isoObject)
   if instanceof(isoObject, "IsoWindow") or instanceof(isoObject, "IsoDoor") then
     local modData = isoObject:getModData()
-    modData["BarricadedWorld:isPlayerPlaced"] = true
+    modData[IModData.IsPlayerPlaced] = true
     isoObject:transmitModData()
   end
 end
 
 function PlaceWindowsBaricades.preCalculateErosion()
-  CurrentWorldAgeDays = getGameTime():getWorldAgeHours() / 24
+  BarricadedWorld.CurrentWorldAgeDays = getGameTime():getWorldAgeHours() / 24
   local sandboxOptions = getSandboxOptions()
-  local timeSpent = CurrentWorldAgeDays + TimeSinceApoValues[sandboxOptions:getTimeSinceApo()]
-  CurrentErosionPercentage = (timeSpent / ErosionSpeedValues[sandboxOptions:getErosionSpeed()]) * 100
+
+  local timeSpent = BarricadedWorld.CurrentWorldAgeDays
+      + BarricadedWorld.TimeSinceApoValues[sandboxOptions:getTimeSinceApo()]
+
+  BarricadedWorld.CurrentErosionPercentage = (
+    timeSpent / BarricadedWorld.ErosionSpeedValues[sandboxOptions:getErosionSpeed()]
+  ) * 100
 end
+
+--
+-- Finalize
+--
 
 Events.OnGameTimeLoaded.Add(PlaceWindowsBaricades.preCalculateErosion)
 Events.EveryDays.Add(PlaceWindowsBaricades.preCalculateErosion)
 Events.OnGameStart.Add(PlaceWindowsBaricades.preCalculateErosion)
 
 Events.OnObjectAdded.Add(PlaceWindowsBaricades.onObjectAdded)
-Events.LoadGridsquare.Add(PlaceWindowsBaricades.loadGridsquare);
+Events.LoadGridsquare.Add(PlaceWindowsBaricades.loadGridsquare)

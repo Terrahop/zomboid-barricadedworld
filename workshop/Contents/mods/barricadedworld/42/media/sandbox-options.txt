@@ -8,54 +8,54 @@ option BarricadedWorld.UseErosion
     translation = BarricadedWorld_UseErosion,
 }
 
-option BarricadedWorld.Garage
+option BarricadedWorld.GarageBreak
 {
     type = integer,
     min = 0,
-    default = 10,
+    default = 8,
     max = 100,
     page = BarricadedWorld,
-    translation = BarricadedWorld_Garage,
+    translation = BarricadedWorld_GarageBreak,
 }
 
-option BarricadedWorld.ExteriorDoor
+option BarricadedWorld.ExteriorDoorBreak
 {
     type = integer,
     min = 0,
-    default = 20,
+    default = 50,
     max = 100,
     page = BarricadedWorld,
-    translation = BarricadedWorld_ExteriorDoor,
+    translation = BarricadedWorld_ExteriorDoorBreak,
 }
 
 option BarricadedWorld.ExteriorDoorBarricade
 {
     type = integer,
     min = 0,
-    default = 10,
+    default = 30,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_ExteriorDoorBarricade,
 }
 
-option BarricadedWorld.InteriorDoor
-{
-    type = integer,
-    min = 0,
-    default = 10,
-    max = 100,
-    page = BarricadedWorld,
-    translation = BarricadedWorld_InteriorDoor,
-}
-
-option BarricadedWorld.Window
+option BarricadedWorld.InteriorDoorBreak
 {
     type = integer,
     min = 0,
     default = 40,
     max = 100,
     page = BarricadedWorld,
-    translation = BarricadedWorld_Window,
+    translation = BarricadedWorld_InteriorDoorBreak,
+}
+
+option BarricadedWorld.WindowBreak
+{
+    type = integer,
+    min = 0,
+    default = 50,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_WindowBreak,
 }
 
 
@@ -63,7 +63,7 @@ option BarricadedWorld.WindowBarricade
 {
     type = integer,
     min = 0,
-    default = 20,
+    default = 40,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_WindowBarricade,
@@ -73,8 +73,38 @@ option BarricadedWorld.WindowBarricadeMetal
 {
     type = integer,
     min = 0,
-    default = 6,
+    default = 15,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_WindowBarricadeMetal,
+}
+
+option BarricadedWorld.WindowBarricadeMetalBar
+{
+    type = integer,
+    min = 0,
+    default = 20,
+    max = 100,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_WindowBarricadeMetalBar,
+}
+
+option BarricadedWorld.zMax
+{
+    type = integer,
+    min = 0,
+    default = 16,
+    max = 32,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_zMax,
+}
+
+option BarricadedWorld.zMin
+{
+    type = integer,
+    min = -32,
+    default = -16,
+    max = 0,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_zMin,
 }
