@@ -27,5 +27,5 @@
   "Sandbox_BarricadedWorld_ZMin_tooltip": "The minimum z level that barricaded world will apply to, inreasing this may improve performance",
 
   "Sandbox_BarricadedWorld_OnlyOnce": "EXPERIMENTAL - Run Only Once",
-  "Sandbox_BarricadedWorld_OnlyOnce_tooltip": "If enabled, barricaded world will only run once on the tiles around you as you explore the world, which should drastically increase performance when going to previously visited areas. This does however mean that progressive detioration/barricading over time will not work on already explored areas. This will also result in extremely large save files as every grid square will be tracked"
+  "Sandbox_BarricadedWorld_OnlyOnce_tooltip": "If enabled, barricaded world will only run once on the tiles around you as you explore the world, which should drastically increase performance when going to previously visited areas. This does however mean that progressive detioration/barricading over time will not work on already explored areas. This will also result in extremely large save files as every grid square will be tracked, this probably shouldn't be used and your mileage may vary."
 }
