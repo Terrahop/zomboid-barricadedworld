@@ -12,7 +12,7 @@ option BarricadedWorld.GarageBreak
 {
     type = integer,
     min = 0,
-    default = 10,
+    default = 8,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_GarageBreak,
@@ -22,7 +22,7 @@ option BarricadedWorld.ExteriorDoorBreak
 {
     type = integer,
     min = 0,
-    default = 40,
+    default = 50,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_ExteriorDoorBreak,
@@ -32,7 +32,7 @@ option BarricadedWorld.ExteriorDoorBarricade
 {
     type = integer,
     min = 0,
-    default = 20,
+    default = 30,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_ExteriorDoorBarricade,
@@ -93,7 +93,7 @@ option BarricadedWorld.zMax
 {
     type = integer,
     min = 0,
-    default = 1,
+    default = 16,
     max = 32,
     page = BarricadedWorld,
     translation = BarricadedWorld_zMax,
@@ -103,7 +103,7 @@ option BarricadedWorld.zMin
 {
     type = integer,
     min = -32,
-    default = -1,
+    default = -16,
     max = 0,
     page = BarricadedWorld,
     translation = BarricadedWorld_zMin,
