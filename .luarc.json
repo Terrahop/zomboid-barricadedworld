@@ -4,6 +4,6 @@
     "../Umbrella"
   ],
   "workspace.ignoreDir": [
-    "workshop"
+    "workshop/*"
   ]
 }
