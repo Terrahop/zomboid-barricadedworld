@@ -78,3 +78,11 @@ option BarricadedWorld.WindowBarricadeMetal
     page = BarricadedWorld,
     translation = BarricadedWorld_WindowBarricadeMetal,
 }
+
+option BarricadedWorld.OnlyGroundLevel
+{
+    type = boolean,
+    default = true,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_OnlyGroundLevel,
+}

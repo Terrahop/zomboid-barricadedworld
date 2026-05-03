@@ -24,4 +24,7 @@ Sandbox_EN = {
 
     Sandbox_BarricadedWorld_WindowBarricadeMetal = "Window Metal Barricade Chance",
     Sandbox_BarricadedWorld_WindowBarricadeMetal_tooltip = "Chance for a window to be barricaded with a metal sheet instead of wood",
+
+    Sandbox_BarricadedWorld_WindowBarricadeMetal = "EXPERIMENTAL - Only Ground Level",
+    Sandbox_BarricadedWorld_WindowBarricadeMetal_tooltip = "Only apply barricaded world to ground level",
 }
