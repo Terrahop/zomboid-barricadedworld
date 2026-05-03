@@ -2,12 +2,12 @@ if BarricadedWorld == nil then BarricadedWorld = {} end
 
 function BarricadedWorld.setProtection(isoObject, value)
   local modData = isoObject:getModData()
-  modData["BarricadedWorld:isPlayerPlaced"] = value
+  modData[BarricadedWorldModData.IsPlayerPlaced] = value
   isoObject:transmitModData()
 end
 
-function BarricadedWorld.contextMenuOptions(player, context, worldobjects)
-  local playerObj = getSpecificPlayer(player)
+function BarricadedWorld.contextMenuOptions(_, context, worldobjects)
+  -- local playerObj = getSpecificPlayer(player)
   local tileIsoObject = nil
   for _, v in ipairs(worldobjects) do
     if instanceof(v, "IsoDoor") then
@@ -19,7 +19,7 @@ function BarricadedWorld.contextMenuOptions(player, context, worldobjects)
   -- Protect from erosion
   if tileIsoObject then
     local modData = tileIsoObject:getModData()
-    if modData["BarricadedWorld:isPlayerPlaced"] then
+    if modData[BarricadedWorldModData.IsPlayerPlaced] then
       context:addOption("Remove erosion protection", tileIsoObject, BarricadedWorld.setProtection, false)
     else
       context:addOption("Protect from erosion", tileIsoObject, BarricadedWorld.setProtection, true)

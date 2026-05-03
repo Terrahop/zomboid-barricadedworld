@@ -16,11 +16,12 @@ local BarricadeType = {
   MetalBar = "Base.MetalBar",
 }
 
----@enum OModData
-local IModData = {
+---@enum IModData
+BarricadedWorldModData = {
   IsParsed = "BarricadedWorld:isDefinitiveParsed",
   IsPlayerPlaced = "BarricadedWorld:isPlayerPlaced",
   ParsedDay = "BarricadedWorld:parsedDay",
+  SquareProcessed = "BarricadedWorld:squareProcessed",
 }
 
 local function logger(message, severity)
@@ -28,7 +29,7 @@ local function logger(message, severity)
 end
 
 --
--- Properties
+-- Functions
 --
 
 ---@param grid_square IsoGridSquare
@@ -40,22 +41,27 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
   --- @type {
   --- WindowBreak: integer, WindowBarricade: integer, WindowBarricadeMetal: integer, WindowBarricadeMetalBar: integer,
   --- ExteriorDoorBreak: integer, ExteriorDoorBarricade: integer, InteriorDoorBreak: integer,
-  --- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer }
+  --- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer, OnlyOnce: boolean }
   --- }
   local options = SandboxVars.BarricadedWorld
 
-  local square_z = grid_square:getZ()
+  local square_mod_data = grid_square:getModData()
 
+  -- HACK: Try improve performance by never running on previously visited areas.
+  if options.OnlyOnce and square_mod_data[BarricadedWorldModData.SquareProcessed] then
+    return
+  elseif options.OnlyOnce then
+    square_mod_data[BarricadedWorldModData.SquareProcessed] = true
+    grid_square:transmitModdata()
+  end
+
+  local square_z = grid_square:getZ()
   if (square_z < options.zMin) or (square_z > options.zMax) then
     return
   end
 
   local square_objects = grid_square:getObjects()
   local square_objects_size = square_objects:size()
-
-  if square_objects_size == 0 then
-    return
-  end
 
   for i = 0, square_objects_size - 1 do
     local tileIsoObject = square_objects:get(i)
@@ -67,14 +73,17 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
     local modData = tileIsoObject:getModData()
 
     -- Don't run on player built objects
-    if modData[IModData.IsPlayerPlaced] then
+    if modData[BarricadedWorldModData.IsPlayerPlaced] then
       break
     end
 
     -- If the window or door has been loaded in the past 30 days, cancel barricaded world.
     if
-        modData[IModData.IsParsed]
-        or (modData[IModData.ParsedDay] and modData[IModData.ParsedDay] + 30 >= BarricadedWorld.CurrentWorldAgeDays)
+      modData[BarricadedWorldModData.IsParsed]
+      or (
+        modData[BarricadedWorldModData.ParsedDay]
+        and modData[BarricadedWorldModData.ParsedDay] + 30 >= BarricadedWorld.CurrentWorldAgeDays
+      )
     then
       break
     end
@@ -91,16 +100,16 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
       if ZombRand(100) < BarricadedWorld.CurrentErosionPercentage or not options.UseErosion then
         if ZombRand(100) < options.WindowBreak then
           tileIsoObject:setSmashed(true)
-          grid_square:addBrokenGlass();
+          grid_square:addBrokenGlass()
           tileIsoObject:sendObjectChange(IsoObjectChange.STATE)
         end
 
-        -- local randomBaricadeLocation = ZombRand(4)
-        -- local barricadeLocation = randomBaricadeLocation <= 2
+        -- Only barricade windows on the ground floor
+        if grid_square:getZ() ~= 0 then
+          break
+        end
 
-        local random = ZombRand(100)
-
-        if random < options.WindowBarricadeMetal then
+        if ZombRand(100) < options.WindowBarricadeMetal then
           local metalType = BarricadeType.MetalSheet
 
           if ZombRand(100) < options.WindowBarricadeMetalBar then
@@ -110,19 +119,19 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
           local args = {
             index = i,
             type = metalType,
-            condition = 10,
           }
+
           PlaceWindowsBaricades.placeMetalBarricade(args, tileIsoObject)
-        elseif random < options.WindowBarricade then
+        elseif ZombRand(100) < options.WindowBarricade then
           tileIsoObject:addRandomBarricades()
         end
       end
 
       if BarricadedWorld.CurrentErosionPercentage > 100 then
-        modData[IModData.IsParsed] = true
+        modData[BarricadedWorldModData.IsParsed] = true
       end
 
-      modData[IModData.ParsedDay] = BarricadedWorld.CurrentWorldAgeDays
+      modData[BarricadedWorldModData.ParsedDay] = BarricadedWorld.CurrentWorldAgeDays
       tileIsoObject:transmitModData()
 
       break
@@ -141,10 +150,10 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
             tileIsoObject:destroy()
           end
         elseif tileIsoObject:isOutside() then
-          if random < options.ExteriorDoorBreak then
-            tileIsoObject:destroy()
-          elseif random < options.ExteriorDoorBarricade then
+          if random < options.ExteriorDoorBarricade then
             tileIsoObject:addRandomBarricades()
+          elseif ZombRand(100) < options.ExteriorDoorBreak then
+            tileIsoObject:destroy()
           end
         else
           if random < options.InteriorDoorBreak then
@@ -154,10 +163,10 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
       end
 
       if BarricadedWorld.CurrentErosionPercentage > 100 then
-        tileModData[IModData.IsParsed] = true
+        tileModData[BarricadedWorldModData.IsParsed] = true
       end
 
-      tileModData[IModData.ParsedDay] = BarricadedWorld.CurrentWorldAgeDays
+      tileModData[BarricadedWorldModData.ParsedDay] = BarricadedWorld.CurrentWorldAgeDays
       tileIsoObject:transmitModData()
 
       break
@@ -165,7 +174,7 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
   end
 end
 
----@param args {index: integer, type: string, condition: integer}
+---@param args {index: integer, type: string}
 ---@param object BarricadeAble
 function PlaceWindowsBaricades.placeMetalBarricade(args, object)
   local barricade = IsoBarricade.AddBarricadeToObject(object, false)
@@ -193,7 +202,7 @@ end
 function PlaceWindowsBaricades.onObjectAdded(isoObject)
   if instanceof(isoObject, "IsoWindow") or instanceof(isoObject, "IsoDoor") then
     local modData = isoObject:getModData()
-    modData[IModData.IsPlayerPlaced] = true
+    modData[BarricadedWorldModData.IsPlayerPlaced] = true
     isoObject:transmitModData()
   end
 end
@@ -203,7 +212,7 @@ function PlaceWindowsBaricades.preCalculateErosion()
   local sandboxOptions = getSandboxOptions()
 
   local timeSpent = BarricadedWorld.CurrentWorldAgeDays
-      + BarricadedWorld.TimeSinceApoValues[sandboxOptions:getTimeSinceApo()]
+    + BarricadedWorld.TimeSinceApoValues[sandboxOptions:getTimeSinceApo()]
 
   BarricadedWorld.CurrentErosionPercentage = (
     timeSpent / BarricadedWorld.ErosionSpeedValues[sandboxOptions:getErosionSpeed()]
