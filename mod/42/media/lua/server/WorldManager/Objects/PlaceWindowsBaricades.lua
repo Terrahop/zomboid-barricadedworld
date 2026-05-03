@@ -23,6 +23,10 @@ local IModData = {
   ParsedDay = "BarricadedWorld:parsedDay",
 }
 
+local function logger(message, severity)
+  print("[BarricadedWorld] " .. (severity or "INFO: ") .. message)
+end
+
 --
 -- Properties
 --
@@ -78,8 +82,6 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
     if instanceof(tileIsoObject, "IsoWindow") then
       ---@cast tileIsoObject IsoWindow We know the IsObject is a window here
 
-      local coords = { x = grid_square:getX(), y = grid_square:getY(), z = grid_square:getZ() }
-
       if not instanceof(tileIsoObject, "BarricadeAble") then
         break
       end
@@ -88,21 +90,17 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
       -- 25% of current erosion advancement means 25% chance for a windows to go through the Barricaded World code.
       if ZombRand(100) < BarricadedWorld.CurrentErosionPercentage or not options.UseErosion then
         if ZombRand(100) < options.WindowBreak then
-          print("SMASHING window")
-          tileIsoObject:smashWindow(false, false)
+          tileIsoObject:setSmashed(true)
+          grid_square:addBrokenGlass();
+          tileIsoObject:sendObjectChange(IsoObjectChange.STATE)
         end
 
-        if coords.z ~= 0 then
-          break
-        end
-
-        local randomBaricadeLocation = ZombRand(4)
-        local barricadeLocation = randomBaricadeLocation <= 2
+        -- local randomBaricadeLocation = ZombRand(4)
+        -- local barricadeLocation = randomBaricadeLocation <= 2
 
         local random = ZombRand(100)
 
         if random < options.WindowBarricadeMetal then
-          print("Barricading window with METAL")
           local metalType = BarricadeType.MetalSheet
 
           if ZombRand(100) < options.WindowBarricadeMetalBar then
@@ -114,9 +112,8 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
             type = metalType,
             condition = 10,
           }
-          PlaceWindowsBaricades.placeMetalBarricade(args, tileIsoObject, barricadeLocation)
+          PlaceWindowsBaricades.placeMetalBarricade(args, tileIsoObject)
         elseif random < options.WindowBarricade then
-          print("Barricading window with WOOD")
           tileIsoObject:addRandomBarricades()
         end
       end
@@ -141,24 +138,17 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
 
         if tileIsoObject:getProperties():has(IsoPropertyType.GARAGE_DOOR) then
           if random < options.GarageBreak then
-            print("Destroying GARAGE")
             tileIsoObject:destroy()
-            break
           end
         elseif tileIsoObject:isOutside() then
           if random < options.ExteriorDoorBreak then
-            print("Destroying EXTERIOR DOOR")
             tileIsoObject:destroy()
-            break
           elseif random < options.ExteriorDoorBarricade then
-            print("Barricading EXTERIOR DOOR with WOOD")
             tileIsoObject:addRandomBarricades()
           end
         else
           if random < options.InteriorDoorBreak then
-            print("Destroying INTERIOR DOOR")
             tileIsoObject:destroy()
-            break
           end
         end
       end
@@ -175,19 +165,17 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
   end
 end
 
-function PlaceWindowsBaricades.isGettable(sq, i)
-  return sq:getObjects():get(i)
-end
-
----comment
 ---@param args {index: integer, type: string, condition: integer}
 ---@param object BarricadeAble
----@param barricadeLocation boolean
-function PlaceWindowsBaricades.placeMetalBarricade(args, object, barricadeLocation)
+function PlaceWindowsBaricades.placeMetalBarricade(args, object)
   local barricade = IsoBarricade.AddBarricadeToObject(object, false)
 
   if barricade then
     local metal = instanceItem(args.type)
+    if not metal then
+      logger("Could not find metal to barricade with", "ERROR")
+      return
+    end
 
     if args.type == BarricadeType.MetalSheet then
       ---@diagnostic disable-next-line: param-type-mismatch
