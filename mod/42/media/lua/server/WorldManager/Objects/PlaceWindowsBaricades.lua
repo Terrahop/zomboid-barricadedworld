@@ -89,7 +89,7 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
       if ZombRand(100) < BarricadedWorld.CurrentErosionPercentage or not options.UseErosion then
         if ZombRand(100) < options.WindowBreak then
           print("SMASHING window")
-          tileIsoObject:smashWindow()
+          tileIsoObject:smashWindow(false, false)
         end
 
         if coords.z ~= 0 then
