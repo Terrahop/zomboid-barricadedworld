@@ -109,6 +109,13 @@ option BarricadedWorld.zMin
     translation = BarricadedWorld_ZMin,
 }
 
+option BarricadedWorld.IgnoreClaimed
+{
+    type = boolean,
+    default = true,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_IgnoreClaimed,
+}
 
 option BarricadedWorld.OnlyOnce
 {

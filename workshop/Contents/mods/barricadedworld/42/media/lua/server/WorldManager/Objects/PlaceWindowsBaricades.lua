@@ -8,7 +8,6 @@ BarricadedWorld = {
   CurrentErosionPercentage = 0,
   CurrentWorldAgeDays = 0,
 }
-PlaceWindowsBaricades = {}
 
 ---@enum BarricadeType
 local BarricadeType = {
@@ -16,7 +15,7 @@ local BarricadeType = {
   MetalBar = "Base.MetalBar",
 }
 
----@enum IModData
+---@enum BarricadedWorldModData
 BarricadedWorldModData = {
   IsParsed = "BarricadedWorld:isDefinitiveParsed",
   IsPlayerPlaced = "BarricadedWorld:isPlayerPlaced",
@@ -28,22 +27,22 @@ local function logger(message, severity)
   print("[BarricadedWorld] " .. (severity or "INFO: ") .. message)
 end
 
+--- @type {
+--- WindowBreak: integer, WindowBarricade: integer, WindowBarricadeMetal: integer, WindowBarricadeMetalBar: integer,
+--- ExteriorDoorBreak: integer, ExteriorDoorBarricade: integer, InteriorDoorBreak: integer,
+--- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer, OnlyOnce: boolean, IgnoreClaimed: boolean }
+--- }
+local options = nil
+
 --
 -- Functions
 --
 
 ---@param grid_square IsoGridSquare
-function PlaceWindowsBaricades.loadGridsquare(grid_square)
+function BarricadedWorld.loadGridsquare(grid_square)
   if isClient() == true then
     return
   end
-
-  --- @type {
-  --- WindowBreak: integer, WindowBarricade: integer, WindowBarricadeMetal: integer, WindowBarricadeMetalBar: integer,
-  --- ExteriorDoorBreak: integer, ExteriorDoorBarricade: integer, InteriorDoorBreak: integer,
-  --- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer, OnlyOnce: boolean }
-  --- }
-  local options = SandboxVars.BarricadedWorld
 
   local square_mod_data = grid_square:getModData()
 
@@ -58,6 +57,12 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
   local square_z = grid_square:getZ()
   if (square_z < options.zMin) or (square_z > options.zMax) then
     return
+  end
+
+  if options.IgnoreClaimed then
+    if SafeHouse.getSafeHouse(grid_square) then
+      return
+    end
   end
 
   local square_objects = grid_square:getObjects()
@@ -116,12 +121,7 @@ function PlaceWindowsBaricades.loadGridsquare(grid_square)
             metalType = BarricadeType.MetalBar
           end
 
-          local args = {
-            index = i,
-            type = metalType,
-          }
-
-          PlaceWindowsBaricades.placeMetalBarricade(args, tileIsoObject)
+          BarricadedWorld.placeMetalBarricade({ index = i, type = metalType }, tileIsoObject)
         elseif ZombRand(100) < options.WindowBarricade then
           tileIsoObject:addRandomBarricades()
         end
@@ -176,7 +176,7 @@ end
 
 ---@param args {index: integer, type: string}
 ---@param object BarricadeAble
-function PlaceWindowsBaricades.placeMetalBarricade(args, object)
+function BarricadedWorld.placeMetalBarricade(args, object)
   local barricade = IsoBarricade.AddBarricadeToObject(object, false)
 
   if barricade then
@@ -199,7 +199,7 @@ function PlaceWindowsBaricades.placeMetalBarricade(args, object)
   end
 end
 
-function PlaceWindowsBaricades.onObjectAdded(isoObject)
+function BarricadedWorld.onObjectAdded(isoObject)
   if instanceof(isoObject, "IsoWindow") or instanceof(isoObject, "IsoDoor") then
     local modData = isoObject:getModData()
     modData[BarricadedWorldModData.IsPlayerPlaced] = true
@@ -207,7 +207,7 @@ function PlaceWindowsBaricades.onObjectAdded(isoObject)
   end
 end
 
-function PlaceWindowsBaricades.preCalculateErosion()
+function BarricadedWorld.preCalculateErosion()
   BarricadedWorld.CurrentWorldAgeDays = getGameTime():getWorldAgeHours() / 24
   local sandboxOptions = getSandboxOptions()
 
@@ -219,13 +219,24 @@ function PlaceWindowsBaricades.preCalculateErosion()
   ) * 100
 end
 
+function BarricadedWorld.OnGameStart()
+  options = SandboxVars.BarricadedWorld
+  BarricadedWorld.preCalculateErosion()
+end
+
+function BarricadedWorld.EveryOneMinute()
+  options = SandboxVars.BarricadedWorld
+end
+
 --
 -- Finalize
 --
 
-Events.OnGameTimeLoaded.Add(PlaceWindowsBaricades.preCalculateErosion)
-Events.EveryDays.Add(PlaceWindowsBaricades.preCalculateErosion)
-Events.OnGameStart.Add(PlaceWindowsBaricades.preCalculateErosion)
+Events.OnGameTimeLoaded.Add(BarricadedWorld.preCalculateErosion)
+Events.OnGameStart.Add(BarricadedWorld.OnGameStart)
+Events.OnObjectAdded.Add(BarricadedWorld.onObjectAdded)
 
-Events.OnObjectAdded.Add(PlaceWindowsBaricades.onObjectAdded)
-Events.LoadGridsquare.Add(PlaceWindowsBaricades.loadGridsquare)
+Events.EveryDays.Add(BarricadedWorld.preCalculateErosion)
+Events.EveryOneMinute.Add(BarricadedWorld.EveryOneMinute)
+
+Events.LoadGridsquare.Add(BarricadedWorld.loadGridsquare)
