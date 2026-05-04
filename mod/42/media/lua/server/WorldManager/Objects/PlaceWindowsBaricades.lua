@@ -30,7 +30,7 @@ end
 --- @type {
 --- WindowBreak: integer, WindowBarricade: integer, WindowBarricadeMetal: integer, WindowBarricadeMetalBar: integer,
 --- ExteriorDoorBreak: integer, ExteriorDoorBarricade: integer, InteriorDoorBreak: integer,
---- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer, OnlyOnce: boolean }
+--- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer, OnlyOnce: boolean, IgnoreClaimed: boolean }
 --- }
 local options = nil
 
@@ -57,6 +57,12 @@ function BarricadedWorld.loadGridsquare(grid_square)
   local square_z = grid_square:getZ()
   if (square_z < options.zMin) or (square_z > options.zMax) then
     return
+  end
+
+  if options.IgnoreClaimed then
+    if SafeHouse.getSafeHouse(grid_square) then
+      return
+    end
   end
 
   local square_objects = grid_square:getObjects()
