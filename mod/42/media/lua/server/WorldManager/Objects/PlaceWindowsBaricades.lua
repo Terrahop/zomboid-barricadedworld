@@ -34,22 +34,23 @@ local options = nil
 --- Logic
 -----
 
----@param args {index: integer, type: string}
+--- Attempt to barricade door with a metal sheet or metal bars.
+---@param type BarricadeType
 ---@param object BarricadeAble
-local function placeMetalBarricade(args, object)
+local function placeMetalBarricade(object, type)
   local barricade = IsoBarricade.AddBarricadeToObject(object, false)
 
   if barricade then
-    local metal = instanceItem(args.type)
+    local metal = instanceItem(type)
     if not metal then
-      -- logger("Could not find metal to barricade with", "ERROR")
+      error("Could not find metal to barricade with: " .. type)
       return
     end
 
-    if args.type == BarricadeType.MetalSheet then
+    if type == BarricadeType.MetalSheet then
       ---@diagnostic disable-next-line: param-type-mismatch
       barricade:addMetal(nil, metal)
-    elseif args.type == BarricadeType.MetalBar then
+    elseif type == BarricadeType.MetalBar then
       ---@diagnostic disable-next-line: param-type-mismatch
       barricade:addMetalBar(nil, metal)
     end
@@ -75,15 +76,13 @@ local function loadGridsquare(grid_square)
     grid_square:transmitModdata()
   end
 
-  local square_z = grid_square:getZ()
-  if (square_z < options.zMin) or (square_z > options.zMax) then
+  if options.IgnoreClaimed and SafeHouse.getSafeHouse(grid_square) then
     return
   end
 
-  if options.IgnoreClaimed then
-    if SafeHouse.getSafeHouse(grid_square) then
-      return
-    end
+  local square_z = grid_square:getZ()
+  if (square_z < options.zMin) or (square_z > options.zMax) then
+    return
   end
 
   local square_objects = grid_square:getObjects()
@@ -98,18 +97,13 @@ local function loadGridsquare(grid_square)
 
     local modData = tileIsoObject:getModData()
 
-    -- Don't run on player built objects
-    if modData[ModData.IsPlayerPlaced] then
-      break
-    end
-
-    -- If the window or door has been loaded in the past 30 days, cancel barricaded world.
+    -- Cancel barricaded world if player built
+    -- or 100% erosion parsed objects
+    -- or if the window/door has been processed in the past 30 days
     if
-      modData[ModData.IsParsed]
-      or (
-        modData[ModData.ParsedDay]
-        and modData[ModData.ParsedDay] + 30 >= state.CurrentWorldAgeDays
-      )
+      modData[ModData.IsPlayerPlaced]
+      or modData[ModData.IsParsed]
+      or (modData[ModData.ParsedDay] and modData[ModData.ParsedDay] + 30 >= state.CurrentWorldAgeDays)
     then
       break
     end
@@ -136,13 +130,9 @@ local function loadGridsquare(grid_square)
         end
 
         if ZombRand(100) < options.WindowBarricadeMetal then
-          local metalType = BarricadeType.MetalSheet
-
-          if ZombRand(100) < options.WindowBarricadeMetalBar then
-            metalType = BarricadeType.MetalBar
-          end
-
-          placeMetalBarricade({ index = i, type = metalType }, tileIsoObject)
+          placeMetalBarricade(tileIsoObject, BarricadeType.MetalSheet)
+        elseif ZombRand(100) < options.WindowBarricadeMetalBar then
+          placeMetalBarricade(tileIsoObject, BarricadeType.MetalBar)
         elseif ZombRand(100) < options.WindowBarricade then
           tileIsoObject:addRandomBarricades()
         end
@@ -202,15 +192,13 @@ local function preCalculateErosion()
   state.CurrentWorldAgeDays = getGameTime():getWorldAgeHours() / 24
   local sandboxOptions = getSandboxOptions()
 
-  local timeSpent = state.CurrentWorldAgeDays
-    + state.TimeSinceApoValues[sandboxOptions:getTimeSinceApo()]
+  local timeSpent = state.CurrentWorldAgeDays + state.TimeSinceApoValues[sandboxOptions:getTimeSinceApo()]
 
-  state.CurrentErosionPercentage = (
-    timeSpent / state.ErosionSpeedValues[sandboxOptions:getErosionSpeed()]
-  ) * 100
+  state.CurrentErosionPercentage = (timeSpent / state.ErosionSpeedValues[sandboxOptions:getErosionSpeed()]) * 100
 end
 
-local function onObjectAdded(isoObject)
+---@param isoObject IsoObject
+local function checkPlayerPlaced(isoObject)
   if instanceof(isoObject, "IsoWindow") or instanceof(isoObject, "IsoDoor") then
     local modData = isoObject:getModData()
     modData[ModData.IsPlayerPlaced] = true
@@ -218,32 +206,42 @@ local function onObjectAdded(isoObject)
   end
 end
 
-local function onGameStart()
-  options = SandboxVars.BarricadedWorld
-  preCalculateErosion()
-end
-
-local function EveryTenMinutes()
-  options = SandboxVars.BarricadedWorld
-end
-
-local function onGameTimeLoaded()
-  preCalculateErosion()
-end
-
-local function everyDays()
-  preCalculateErosion()
+---@param isoObject IsoObject
+local function cleanupModData(isoObject)
+  local modData = isoObject:getModData()
+  modData[ModData.IsParsed] = nil
+  modData[ModData.IsPlayerPlaced] = nil
+  modData[ModData.ParsedDay] = nil
+  isoObject:transmitModData()
 end
 
 -----
 --- Finalize
 -----
 
-Events.OnGameTimeLoaded.Add(onGameTimeLoaded)
-Events.OnGameStart.Add(onGameStart)
-Events.OnObjectAdded.Add(onObjectAdded)
+Events.OnGameTimeLoaded.Add(function()
+  preCalculateErosion()
+end)
 
-Events.EveryDays.Add(everyDays)
-Events.EveryTenMinutes.Add(EveryTenMinutes)
+Events.OnGameStart.Add(function()
+  options = SandboxVars.BarricadedWorld
+  preCalculateErosion()
+end)
+Events.OnObjectAdded.Add(function(isoObject)
+  checkPlayerPlaced(isoObject)
+end)
+
+Events.OnObjectAboutToBeRemoved.Add(function(isoObject)
+  print("processing removal of: " .. isoObject:getName())
+  cleanupModData(isoObject)
+end)
+
+Events.EveryDays.Add(function()
+  preCalculateErosion()
+end)
+
+Events.EveryTenMinutes.Add(function()
+  options = SandboxVars.BarricadedWorld
+end)
 
 Events.LoadGridsquare.Add(loadGridsquare)
