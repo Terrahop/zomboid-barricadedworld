@@ -61,7 +61,7 @@ end
 
 ---@param grid_square IsoGridSquare
 local function loadGridsquare(grid_square)
-  if isClient() == true then
+  if isClient() == true or options == nil then
     return
   end
 
