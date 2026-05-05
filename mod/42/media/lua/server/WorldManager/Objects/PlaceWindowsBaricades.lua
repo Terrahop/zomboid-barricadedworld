@@ -28,7 +28,7 @@ local BarricadeType = {
 --- ExteriorDoorBreak: integer, ExteriorDoorBarricade: integer, InteriorDoorBreak: integer,
 --- UseErosion: boolean, GarageBreak: integer, zMin: integer, zMax: integer, OnlyOnce: boolean, IgnoreClaimed: boolean }
 --- }
-local options = nil
+local options = SandboxVars.BarricadedWorld
 
 -----
 --- Logic
