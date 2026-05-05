@@ -60,6 +60,15 @@ local function placeMetalBarricade(object, type)
   end
 end
 
+---@param isoObject IsoObject
+---@param modData ModData
+local function cleanupModData(isoObject, modData)
+  modData[ModData.IsParsed] = nil
+  modData[ModData.IsPlayerPlaced] = nil
+  modData[ModData.ParsedDay] = nil
+  isoObject:transmitModData()
+end
+
 ---@param grid_square IsoGridSquare
 local function loadGridsquare(grid_square)
   if isClient() == true or options == nil then
@@ -159,6 +168,7 @@ local function loadGridsquare(grid_square)
         if tileIsoObject:getProperties():has(IsoPropertyType.GARAGE_DOOR) then
           if random < options.GarageBreak then
             tileIsoObject:destroy()
+            cleanupModData(tileIsoObject, modData)
             break
           end
         elseif tileIsoObject:isOutside() then
@@ -166,11 +176,13 @@ local function loadGridsquare(grid_square)
             tileIsoObject:addRandomBarricades()
           elseif ZombRand(100) < options.ExteriorDoorBreak then
             tileIsoObject:destroy()
+            cleanupModData(tileIsoObject, modData)
             break
           end
         else
           if random < options.InteriorDoorBreak then
             tileIsoObject:destroy()
+            cleanupModData(tileIsoObject, modData)
             break
           end
         end
@@ -206,15 +218,6 @@ local function checkPlayerPlaced(isoObject)
   end
 end
 
----@param isoObject IsoObject
-local function cleanupModData(isoObject)
-  local modData = isoObject:getModData()
-  modData[ModData.IsParsed] = nil
-  modData[ModData.IsPlayerPlaced] = nil
-  modData[ModData.ParsedDay] = nil
-  isoObject:transmitModData()
-end
-
 -----
 --- Finalize
 -----
@@ -229,11 +232,6 @@ Events.OnGameStart.Add(function()
 end)
 Events.OnObjectAdded.Add(function(isoObject)
   checkPlayerPlaced(isoObject)
-end)
-
-Events.OnObjectAboutToBeRemoved.Add(function(isoObject)
-  print("processing removal of: " .. isoObject:getName())
-  cleanupModData(isoObject)
 end)
 
 Events.EveryDays.Add(function()
