@@ -1,13 +1,5 @@
 VERSION = 1,
 
-option BarricadedWorld.UseErosion
-{
-    type = boolean,
-    default = true,
-    page = BarricadedWorld,
-    translation = BarricadedWorld_UseErosion,
-}
-
 option BarricadedWorld.GarageBreak
 {
     type = integer,
@@ -89,6 +81,31 @@ option BarricadedWorld.WindowBarricadeMetalBar
     translation = BarricadedWorld_WindowBarricadeMetalBar,
 }
 
+
+option BarricadedWorld.Separator
+{
+    type = boolean,
+    default = false,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_Separator,
+}
+
+option BarricadedWorld.UseErosion
+{
+    type = boolean,
+    default = true,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_UseErosion,
+}
+
+option BarricadedWorld.IgnoreClaimed
+{
+    type = boolean,
+    default = true,
+    page = BarricadedWorld,
+    translation = BarricadedWorld_IgnoreClaimed,
+}
+
 option BarricadedWorld.zMax
 {
     type = integer,
@@ -109,12 +126,12 @@ option BarricadedWorld.zMin
     translation = BarricadedWorld_ZMin,
 }
 
-option BarricadedWorld.IgnoreClaimed
+option BarricadedWorld.Separator
 {
     type = boolean,
-    default = true,
+    default = false,
     page = BarricadedWorld,
-    translation = BarricadedWorld_IgnoreClaimed,
+    translation = BarricadedWorld_Separator,
 }
 
 option BarricadedWorld.OnlyOnce
