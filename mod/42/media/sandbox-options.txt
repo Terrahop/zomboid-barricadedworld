@@ -4,7 +4,7 @@ option BarricadedWorld.GarageBreak
 {
     type = integer,
     min = 0,
-    default = 8,
+    default = 5,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_GarageBreak,
@@ -75,7 +75,7 @@ option BarricadedWorld.WindowBarricadeMetalBar
 {
     type = integer,
     min = 0,
-    default = 15,
+    default = 6,
     max = 100,
     page = BarricadedWorld,
     translation = BarricadedWorld_WindowBarricadeMetalBar,
