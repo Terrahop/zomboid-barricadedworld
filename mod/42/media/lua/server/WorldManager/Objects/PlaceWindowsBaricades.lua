@@ -120,10 +120,6 @@ local function loadGridsquare(grid_square)
     if instanceof(tileIsoObject, "IsoWindow") then
       ---@cast tileIsoObject IsoWindow We know the IsObject is a window here
 
-      if not instanceof(tileIsoObject, "BarricadeAble") then
-        break
-      end
-
       -- The more advanced the erosion, the more chances the following code has to happen.
       -- 25% of current erosion advancement means 25% chance for a windows to go through the Barricaded World code.
       if ZombRand(100) < state.CurrentErosionPercentage or not options.UseErosion then
@@ -172,7 +168,7 @@ local function loadGridsquare(grid_square)
             break
           end
         elseif tileIsoObject:isOutside() then
-          if random < options.ExteriorDoorBarricade then
+          if random < options.ExteriorDoorBarricade and tileIsoObject:isBarricadeAllowed() then
             tileIsoObject:addRandomBarricades()
           elseif ZombRand(100) < options.ExteriorDoorBreak then
             tileIsoObject:destroy()
