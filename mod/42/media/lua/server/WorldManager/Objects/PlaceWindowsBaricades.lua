@@ -131,7 +131,7 @@ local function loadGridsquare(grid_square)
         end
 
         -- Only barricade windows on the ground floor
-        if grid_square:getZ() ~= 0 then
+        if square_z ~= 0 then
           break
         end
 
