@@ -148,7 +148,7 @@ local function loadGridsquare(grid_square)
         end
       end
 
-      if state.CurrentErosionPercentage > 100 then
+      if state.CurrentErosionPercentage >= 100 then
         modData[ModData.IsParsed] = true
       end
 
@@ -186,7 +186,7 @@ local function loadGridsquare(grid_square)
         end
       end
 
-      if state.CurrentErosionPercentage > 100 then
+      if state.CurrentErosionPercentage >= 100 then
         tileModData[ModData.IsParsed] = true
       end
 
