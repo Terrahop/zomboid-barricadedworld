@@ -131,6 +131,12 @@ end
 ---@param worldobjects IsoObject[]
 ---@diagnostic disable-next-line: unused-local
 local function contextMenuOptions(playerIndex, context, worldobjects)
+  local options = SandboxVars.BarricadedWorld
+
+  if isClient() or (options.AllowProtectMP and not isAdmin()) then
+    return
+  end
+
   ---@type IsoObject|nil
   local tileIsoObject = nil
 
@@ -161,6 +167,7 @@ local function contextMenuOptions(playerIndex, context, worldobjects)
     subMenu:addOption("Enable protection for " .. objectName, tileIsoObject, setProtection, true)
   end
 
+  -- On servers, players can claim houses to get building protection with the IgnoreClaimed sandbox option
   if not isClient() then
     local sq = tileIsoObject:getSquare()
     if sq then

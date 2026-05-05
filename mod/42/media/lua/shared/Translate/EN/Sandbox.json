@@ -30,17 +30,20 @@
   "Sandbox_BarricadedWorld_WindowBarricadeMetalBar_tooltip": "Chance for a window to be barricaded with metal bars",
 
   "Sandbox_BarricadedWorld_ZMax": "Maximum Z Level",
-  "Sandbox_BarricadedWorld_ZMax_tooltip": "The maximum z level that barricaded world will apply to, lowering this may improve performance. 0 is ground level.",
+  "Sandbox_BarricadedWorld_ZMax_tooltip": "The maximum z level that barricaded world will apply to, lowering this may improve performance in areas with tall buildings. 0 is ground level.",
 
   "Sandbox_BarricadedWorld_ZMin": "Minimum Z Level",
-  "Sandbox_BarricadedWorld_ZMin_tooltip": "The minimum z level that barricaded world will apply to, inreasing this may improve performance",
+  "Sandbox_BarricadedWorld_ZMin_tooltip": "The minimum z level that barricaded world will apply to, inreasing this may improve performance in areas with deep underground places. 0 is ground level.",
 
-  "Sandbox_BarricadedWorld_IgnoreClaimed": "Ignore Claimed Houses",
-  "Sandbox_BarricadedWorld_IgnoreClaimed_tooltip": "If enabled, player claimed safehouses will not be effected by barricaded world",
+  "Sandbox_BarricadedWorld_IgnoreClaimed": "MP: Ignore Claimed Houses",
+  "Sandbox_BarricadedWorld_IgnoreClaimed_tooltip": "MULTIPLAYER ONLY! If enabled, player claimed safehouses will not be effected by barricaded world.",
+
+  "Sandbox_BarricadedWorld_AllowProtectMP": "MP: Allow Custom Protection",
+  "Sandbox_BarricadedWorld_AllowProtectMP_tooltip": "MULTIPLAYER ONLY! If enabled, players can protect any building. Admins can always do this regardless of this toggle.",
 
   "Sandbox_BarricadedWorld_OnlyOnce": "EXPERIMENTAL - Run Only Once",
-  "Sandbox_BarricadedWorld_OnlyOnce_tooltip": "If enabled, barricaded world will only run once on the tiles around you as you explore the world, which should drastically increase performance when going to previously visited areas. This does however mean that progressive detioration/barricading over time will not work on already explored areas. This will also result in extremely large save files as every grid square will be tracked, this probably shouldn't be used and your mileage may vary.",
+  "Sandbox_BarricadedWorld_OnlyOnce_tooltip": "If enabled, barricaded world will only run once on the tiles around you as you explore the world, which should drastically increase performance when going to previously visited areas. This does however mean that progressive detioration/barricading over time will not work on already explored areas. This will also result in very large save files as every grid square will be tracked, this probably shouldn't be used and your mileage may vary.",
 
-  "Sandbox_BarricadedWorld_Separator": "=================================================",
-  "Sandbox_BarricadedWorld_Separator_tooltip": "This checkbox does nothing and is only used as to visually separate different options"
+  "Sandbox_BarricadedWorld_Separator": "-----------------------------------------------------------",
+  "Sandbox_BarricadedWorld_Separator_tooltip": "This checkbox does nothing and is only used as to visually separate different options."
 }
