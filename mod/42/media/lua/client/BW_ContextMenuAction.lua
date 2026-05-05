@@ -2,6 +2,7 @@
 ---@param message string Message to say.
 local function say(message)
   local player = getSpecificPlayer(0)
+
   if player then
     player:Say(message)
   end
@@ -19,22 +20,28 @@ end
 --- Set protection state of any iso window or door on a square.
 ---@param square IsoGridSquare
 ---@param value boolean
----@return integer count of objects modified
+---@return {doors: integer, windows: integer} count of objects modified
 local function protectObjectsOnSquare(square, value)
   if not square then
-    return 0
+    return { doors = 0, windows = 0 }
   end
 
-  local count = 0
+  local count = { doors = 0, windows = 0 }
+
   local squareObjects = square:getObjects()
 
   for k = 0, squareObjects:size() - 1 do
     local isoObject = squareObjects:get(k)
 
-    if isoObject and (instanceof(isoObject, "IsoWindow") or instanceof(isoObject, "IsoDoor")) then
+    if isoObject then
       ---@cast isoObject IsoDoor|IsoWindow
-      setProtection(isoObject, value)
-      count = count + 1
+      if instanceof(isoObject, "IsoWindow") then
+        setProtection(isoObject, value)
+        count.windows = count.windows + 1
+      elseif instanceof(isoObject, "IsoDoor") then
+        setProtection(isoObject, value)
+        count.doors = count.doors + 1
+      end
     end
   end
 
@@ -45,6 +52,7 @@ end
 ---@param isoObject IsoDoor|IsoWindow
 local function getObjectBuilding(isoObject)
   local sq = isoObject:getSquare()
+
   if not sq then
     return nil
   end
@@ -88,12 +96,27 @@ local function setBuildingProtection(isoObject, value)
   local buildingDef = building:getDef()
   local roomDefs = buildingDef:getRooms()
   local cell = getCell()
-  local count = 0
+  local doorCount = 0
+  local windowCount = 0
+  ---@type {string: boolean}
+  local visited = {} -- key: "x,y,z" → true
+
+  local function processSquare(x, y, z)
+    local key = x .. "," .. y .. "," .. z
+    if visited[key] then
+      return
+    end
+    visited[key] = true
+
+    local sq = cell:getGridSquare(x, y, z)
+    local c = protectObjectsOnSquare(sq, value)
+    doorCount = doorCount + c.doors
+    windowCount = windowCount + c.windows
+  end
 
   for i = 0, roomDefs:size() - 1 do
     local roomDef = roomDefs:get(i)
     local isoRoom = roomDef:getIsoRoom()
-
     if not isoRoom then
       break
     end
@@ -102,28 +125,29 @@ local function setBuildingProtection(isoObject, value)
 
     for j = 0, squares:size() - 1 do
       local square = squares:get(j)
-
       if not square then
         break
       end
 
       local x, y, z = square:getX(), square:getY(), square:getZ()
 
-      -- Objects on this room square (north and west walls)
-      count = count + protectObjectsOnSquare(square, value)
-
-      -- South edge: objects with getNorth()==true on the square just below
-      -- are the south wall of this room square
-      count = count + protectObjectsOnSquare(cell:getGridSquare(x, y + 1, z), value)
-
-      -- East edge: objects with getNorth()==false on the square just right
-      -- are the east wall of this room square
-      count = count + protectObjectsOnSquare(cell:getGridSquare(x + 1, y, z), value)
+      processSquare(x, y, z)
+      processSquare(x, y + 1, z) -- south edge
+      processSquare(x + 1, y, z) -- east edge
     end
   end
 
-  local action = value and "protected" or "unprotected"
-  say("Barricaded World: " .. count .. " objects " .. action .. " in this building.")
+  local action = value and "Protected" or "Unprotected"
+  say(
+    "Barricaded World: "
+      .. action
+      .. " "
+      .. doorCount
+      .. " doors and "
+      .. windowCount
+      .. " windows "
+      .. "in this building."
+  )
 end
 
 ---@param playerIndex integer
