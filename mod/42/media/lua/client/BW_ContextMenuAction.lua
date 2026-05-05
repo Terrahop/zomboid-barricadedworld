@@ -197,13 +197,8 @@ local function contextMenuOptions(playerIndex, context, worldobjects)
   local objectName = tileIsoObject:getObjectName()
 
   local optionPrefix = ""
-  if isCoopHost() then
-    optionPrefix = "[Host] "
-  end
-
-  if isAdmin() then
-    optionPrefix = "[Admin] "
-  end
+  optionPrefix = isCoopHost() and "[Host] " or ""
+  optionPrefix = isAdmin() and "[Admin] " or ""
 
   if isProtected then
     subMenu:addOption(optionPrefix .. "Disable protection for " .. objectName, tileIsoObject, setProtection, false)
