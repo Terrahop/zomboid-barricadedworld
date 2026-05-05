@@ -1,8 +1,4 @@
-if BarricadedWorld == nil then
-  BarricadedWorld = {}
-end
-
-function BarricadedWorld.setProtection(isoObject, value)
+local function setProtection(isoObject, value)
   local modData = isoObject:getModData()
   modData["BarricadedWorld:isPlayerPlaced"] = value
   isoObject:transmitModData()
@@ -12,7 +8,7 @@ end
 ---@param context ISContextMenu
 ---@param worldobjects IsoObject[]
 ---@diagnostic disable-next-line: unused-local
-function BarricadedWorld.contextMenuOptions(playerIndex, context, worldobjects)
+local function contextMenuOptions(playerIndex, context, worldobjects)
   -- local playerObj = getSpecificPlayer(playerIndex)
   local tileIsoObject = nil
 
@@ -31,18 +27,18 @@ function BarricadedWorld.contextMenuOptions(playerIndex, context, worldobjects)
       context:addOption(
         "[BarricadedWorld] Disable erosion protection for " .. tileIsoObject:getName(),
         tileIsoObject,
-        BarricadedWorld.setProtection,
+        setProtection,
         false
       )
     else
       context:addOption(
         "[BarricadedWorld] Enable erosion protection for " .. tileIsoObject:getName(),
         tileIsoObject,
-        BarricadedWorld.setProtection,
+        setProtection,
         true
       )
     end
   end
 end
 
-Events.OnFillWorldObjectContextMenu.Add(BarricadedWorld.contextMenuOptions)
+Events.OnFillWorldObjectContextMenu.Add(contextMenuOptions)
