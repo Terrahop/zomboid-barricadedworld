@@ -140,13 +140,13 @@ local function setBuildingProtection(isoObject, value)
   local action = value and "Protected" or "Unprotected"
   say(
     "Barricaded World: "
-      .. action
-      .. " "
-      .. doorCount
-      .. " doors and "
-      .. windowCount
-      .. " windows "
-      .. "in this building."
+    .. action
+    .. " "
+    .. doorCount
+    .. " doors and "
+    .. windowCount
+    .. " windows "
+    .. "in this building."
   )
 end
 
@@ -157,7 +157,19 @@ end
 local function contextMenuOptions(playerIndex, context, worldobjects)
   local options = SandboxVars.BarricadedWorld
 
-  if isClient() or (options.AllowProtectMP and not isAdmin()) then
+  print(
+    "isClient: " .. tostring(isClient()) ..
+    " isAdmin: " .. tostring(isAdmin()) ..
+    " isCoopHost: " .. tostring(isCoopHost()) ..
+    " AllowProtectMP:" .. tostring(options.AllowProtectMP) ..
+    "\n "
+  )
+
+  -- server players can claim houses to get building protection with the IgnoreClaimed sandbox option enabled
+  -- and if they are admins
+  -- and if they are the coop host
+  -- and if they are in single player
+  if (isClient() and (not options.AllowProtectMP and not isAdmin())) and not isAdmin() and not isCoopHost() then
     return
   end
 
@@ -171,11 +183,10 @@ local function contextMenuOptions(playerIndex, context, worldobjects)
     end
   end
 
-  ---@cast tileIsoObject IsoDoor|IsoWindow
-
   if not tileIsoObject then
     return
   end
+
 
   local barricadedWorldMenu = context:addOption("BarricadedWorld", tileIsoObject, nil)
   local subMenu = context:getNew(context)
@@ -185,19 +196,25 @@ local function contextMenuOptions(playerIndex, context, worldobjects)
   local isProtected = modData["BarricadedWorld:isPlayerPlaced"]
   local objectName = tileIsoObject:getObjectName()
 
-  if isProtected then
-    subMenu:addOption("Disable protection for " .. objectName, tileIsoObject, setProtection, false)
-  else
-    subMenu:addOption("Enable protection for " .. objectName, tileIsoObject, setProtection, true)
+  local optionPrefix = ""
+  if isCoopHost() then
+    optionPrefix = "[Host] "
   end
 
-  -- On servers, players can claim houses to get building protection with the IgnoreClaimed sandbox option
-  if not isClient() then
-    local sq = tileIsoObject:getSquare()
-    if sq then
-      subMenu:addOption("Protect building", tileIsoObject, setBuildingProtection, true)
-      subMenu:addOption("Unprotect building", tileIsoObject, setBuildingProtection, false)
-    end
+  if isAdmin() then
+    optionPrefix = "[Admin] "
+  end
+
+  if isProtected then
+    subMenu:addOption(optionPrefix .. "Disable protection for " .. objectName, tileIsoObject, setProtection, false)
+  else
+    subMenu:addOption(optionPrefix .. "Enable protection for " .. objectName, tileIsoObject, setProtection, true)
+  end
+
+  local sq = tileIsoObject:getSquare()
+  if sq then
+    subMenu:addOption(optionPrefix .. "Protect building", tileIsoObject, setBuildingProtection, true)
+    subMenu:addOption(optionPrefix .. "Unprotect building", tileIsoObject, setBuildingProtection, false)
   end
 end
 
