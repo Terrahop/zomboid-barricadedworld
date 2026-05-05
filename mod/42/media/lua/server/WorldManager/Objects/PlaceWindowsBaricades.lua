@@ -169,16 +169,19 @@ local function loadGridsquare(grid_square)
         if tileIsoObject:getProperties():has(IsoPropertyType.GARAGE_DOOR) then
           if random < options.GarageBreak then
             tileIsoObject:destroy()
+            break
           end
         elseif tileIsoObject:isOutside() then
           if random < options.ExteriorDoorBarricade then
             tileIsoObject:addRandomBarricades()
           elseif ZombRand(100) < options.ExteriorDoorBreak then
             tileIsoObject:destroy()
+            break
           end
         else
           if random < options.InteriorDoorBreak then
             tileIsoObject:destroy()
+            break
           end
         end
       end
