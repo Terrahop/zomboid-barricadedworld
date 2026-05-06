@@ -10,7 +10,7 @@ and doors to simulate a world in the post-apocalypse Most houses and buildings w
 now actually appear like abandoned safe houses. It's designed around playing on
 advanced erosion (6/12 months later time period).
 
-### Features
+## Features
 
 - Windows have a chance to be destroyed and or barricaded
 - Doors have a chance to be destroyed and or barricaded
@@ -26,7 +26,7 @@ advanced erosion (6/12 months later time period).
 > there are some sandbox options available to improve performance but your
 > mileage may vary.
 
-### Erosion Integration
+## Erosion Integration
 
 When erosion integration is enabled (default). The world will appear more damage
 the longer time goes on if you start with standard time and erosion settings.
@@ -49,23 +49,23 @@ Examples of Sandbox configuration for erosion:
 - A world with very fast "Erosion Speed" (20 days) and with "Month since Apocalypse"
   set to 1 (30 days) will start at 100% of Erosion.
 
-### Updates & Support
+## Updates & Support
 
 For now I consider this mod feature complete and in maintenance mode. There are
 no plans for new features, only bug fixes **IF** if I found the time but no promises.
 
-### Recommendations
+## Recommendations
 
 Recommended [sandbox options](https://imgur.com/SI3AHBl)
 
-#### Mods
+### Mods
 
 > NOTE: if you plan to use the new [10 Years later Remake](https://steamcommunity.com/sharedfiles/filedetails/?id=3719766602)
 You don't need this mod, it already does window smashing and barricading.
 
 - [Trash and Corpses](https://steamcommunity.com/sharedfiles/filedetails/?id=3662273535)
 
-### Credits
+## Credits
 
 - Onkeen for the [original mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935).
 - Amenophis for their [fix](https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052)
