@@ -58,16 +58,16 @@ local function getObjectBuilding(isoObject)
   end
 
   local room = sq:getRoom()
-  -- Handle south and east tiles that aren't considered inside the building.
+  -- Handle south and east tiles that aren't considered inside the building
   if not room then
     if isoObject:getNorth() then
-      -- It's a North wall of the current square
+      -- It's a north wall of the current square
       local adjacent = getCell():getGridSquare(sq:getX(), sq:getY() - 1, sq:getZ())
       if adjacent then
         room = adjacent:getRoom()
       end
     else
-      -- It's a West wall of the current square
+      -- It's a west wall of the current square
       local adjacent = getCell():getGridSquare(sq:getX() - 1, sq:getY(), sq:getZ())
       if adjacent then
         room = adjacent:getRoom()
@@ -99,7 +99,7 @@ local function setBuildingProtection(isoObject, value)
   local doorCount = 0
   local windowCount = 0
   ---@type {string: boolean}
-  local visited = {} -- key: "x,y,z" → true
+  local visited = {}
 
   local function processSquare(x, y, z)
     local key = x .. "," .. y .. "," .. z
@@ -187,6 +187,7 @@ local function contextMenuOptions(playerIndex, context, worldobjects)
     return
   end
 
+  ---@cast tileIsoObject IsoDoor|IsoWindow
 
   local barricadedWorldMenu = context:addOption("BarricadedWorld", tileIsoObject, nil)
   local subMenu = context:getNew(context)
@@ -197,8 +198,7 @@ local function contextMenuOptions(playerIndex, context, worldobjects)
   local objectName = tileIsoObject:getObjectName()
 
   local optionPrefix = ""
-  optionPrefix = isCoopHost() and "[Host] " or ""
-  optionPrefix = isAdmin() and "[Admin] " or ""
+  optionPrefix = not options.AllowProtectMP and (isCoopHost() and "[Host] " or isAdmin() and "[Admin] ") or ""
 
   if isProtected then
     subMenu:addOption(optionPrefix .. "Disable protection for " .. objectName, tileIsoObject, setProtection, false)
