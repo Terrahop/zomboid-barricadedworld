@@ -5,10 +5,10 @@ mod.
 
 ## Description
 
-Adds progressive deterioration of the world by barricading and destroying windows
-and doors to simulate a world in the post-apocalypse Most houses and buildings will
-now actually appear like abandoned safe houses. It's designed around playing on
-advanced erosion (6/12 months later time period).
+Adds progressive deterioration of the world by barricading and destroying
+windows and doors to simulate a world in the post-apocalypse. Most houses and
+buildings will now actually appear like abandoned safe houses. It's designed
+around playing on advanced erosion (6/12 months later time period).
 
 ## Features
 
