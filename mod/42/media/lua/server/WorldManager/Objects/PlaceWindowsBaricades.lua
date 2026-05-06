@@ -34,7 +34,7 @@ local options = SandboxVars.BarricadedWorld
 --- Logic
 -----
 
---- Attempt to barricade door with a metal sheet or metal bars.
+--- Attempt to barricade with a metal sheet or metal bars.
 ---@param type BarricadeType
 ---@param object BarricadeAble
 local function placeMetalBarricade(object, type)
@@ -71,7 +71,7 @@ end
 
 ---@param grid_square IsoGridSquare
 local function loadGridsquare(grid_square)
-  if isClient() == true or options == nil then
+  if isClient() then
     return
   end
 
@@ -85,7 +85,8 @@ local function loadGridsquare(grid_square)
     grid_square:transmitModdata()
   end
 
-  if options.IgnoreClaimed and SafeHouse.getSafeHouse(grid_square) then
+  if isServer() and options.IgnoreClaimed and SafeHouse.getSafeHouse(grid_square) then
+    print("ignoring claimed safehouse")
     return
   end
 
