@@ -1,8 +1,7 @@
 version=1
 id=3529472651
 title=[B42] Barricaded World - Extended Erosion (Continued)
-description=
 description=Workshop ID: 3529472651
 description=Mod ID: BarricadedWorld
-tags=Build 42
+tags=Build 42;Multiplayer;Realistic
 visibility=public
