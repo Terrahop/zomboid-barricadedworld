@@ -70,6 +70,3 @@ You don't need this mod, it already does window smashing and barricading.
 - Onkeen for the [original mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935).
 - Amenophis for their [fix](https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052)
   that started this continuation
-
-Workshop ID: 3529472651
-Mod ID: BarricadedWorld
