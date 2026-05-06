@@ -86,7 +86,6 @@ local function loadGridsquare(grid_square)
   end
 
   if isServer() and options.IgnoreClaimed and SafeHouse.getSafeHouse(grid_square) then
-    print("ignoring claimed safehouse")
     return
   end
 
