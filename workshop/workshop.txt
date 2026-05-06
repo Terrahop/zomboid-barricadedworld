@@ -1,13 +1,6 @@
 version=1
 id=3529472651
 title=[B42] Barricaded World - Extended Erosion (Continued)
-description=[h3] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935] Original Mod [/url] by Onkeen, with fixes included thanks to [url=https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052] Amenophis  [/url]. You do not need the original to use this.  [/h3]
-description=[h3] [i] This version also exposes sandbox options for tweaking chances. [/i] [/h3]
-description=
-description=NOTE: Implemented a quick fix for b42.13 Multiplayer patch by removing support for garage doors breaking, testing is needed for any other potential issues with the update.
-description=
-description=See original mod for description. Some default values have been changed, check the sandbox options for updated defaults.
-description=
 description=
 description=Workshop ID: 3529472651
 description=Mod ID: BarricadedWorld
