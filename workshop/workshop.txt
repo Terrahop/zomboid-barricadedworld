@@ -1,6 +1,6 @@
 version=1
 id=3529472651
-title=[B42] Barricaded World - Extended Erosion (Error Fix)
+title=[B42] Barricaded World - Extended Erosion (Continued)
 description=[h3] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935] Original Mod [/url] by Onkeen, with fixes included thanks to [url=https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052] Amenophis  [/url]. You do not need the original to use this.  [/h3]
 description=[h3] [i] This version also exposes sandbox options for tweaking chances. [/i] [/h3]
 description=
