@@ -1,7 +1,8 @@
 # Barricaded World - Extended Erosion (Continued)
 
-> A continuation of [Onkeens](https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935)
-mod.
+> A continuation of [Onkeens](https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935) mod.
+
+See source on [  Github](github.com/Terrahop/zomboid-barricadedworld)
 
 ## Description
 
@@ -36,7 +37,7 @@ Chances of broken and barricaded garages/doors/windows depends on erosion advanc
 - In options, adjust erosion with "Erosion Speed" and keep "Erosion Days" at 0
 - The more advanced the erosion, the more chances the following code has to happen
 - 25% of current erosion advancement means 25% chance for a window to go through
-the Barricaded World code
+  the Barricaded World code
 - If erosion below 100%, 30 days after a place is loaded, if the place is loaded
   again, the code will be run again
 - When code is loaded for a place at 100% erosion, it will not run anymore even
@@ -52,7 +53,7 @@ Examples of Sandbox configuration for erosion:
 ## Updates & Support
 
 For now I consider this mod feature complete and in maintenance mode. There are
-no plans for new features, only bug fixes **IF** if I found the time but no promises.
+no plans for new features, only bug fixes **IF** I found the time but no promises.
 
 ## Recommendations
 
@@ -60,13 +61,13 @@ Recommended [sandbox options](https://imgur.com/SI3AHBl)
 
 ### Mods
 
-> NOTE: if you plan to use the new [10 Years later Remake](https://steamcommunity.com/sharedfiles/filedetails/?id=3719766602)
-You don't need this mod, it already does window smashing and barricading.
+> NOTE: if you plan to use the new [10 Years later Remake](https://steamcommunity.com/sharedfiles/filedetails/?id=3719766602) you don't need this mod, it already does window smashing and barricading.
 
 - [Trash and Corpses](https://steamcommunity.com/sharedfiles/filedetails/?id=3662273535)
+- [Project Seasons](https://steamcommunity.com/sharedfiles/filedetails/?id=3412105017)
+- [Beauty of zomboid](https://steamcommunity.com/sharedfiles/filedetails/?id=3333779609&searchtext=BEAUTY)
 
 ## Credits
 
 - Onkeen for the [original mod](https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935).
-- Amenophis for their [fix](https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052)
-  that started this continuation
+- Amenophis for their [fix](https://steamcommunity.com/workshop/filedetails/discussion/2696986935/563626489222803655/#c595152144826431052) that started this continuation
