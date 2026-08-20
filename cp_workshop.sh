@@ -1,3 +1,3 @@
 #!/bin/bash
 
-cp -rf ./mod/. ./workshop/Contents/mods/barricadedworld
+rsync -r --info=progress2 ./mod/ ./workshop/Contents/mods/barricadedworld
