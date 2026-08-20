@@ -2,7 +2,7 @@
 
 > A continuation of [Onkeens](https://steamcommunity.com/sharedfiles/filedetails/?id=2696986935) mod.
 
-See source on [  Github](github.com/Terrahop/zomboid-barricadedworld)
+See source on [Github](github.com/Terrahop/zomboid-barricadedworld)
 
 ## Description
 
