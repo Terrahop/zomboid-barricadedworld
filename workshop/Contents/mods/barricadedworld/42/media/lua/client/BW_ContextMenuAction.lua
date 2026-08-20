@@ -75,6 +75,10 @@ local function getObjectBuilding(isoObject)
     end
   end
 
+  if not room then
+    return nil
+  end
+
   local building = room:getBuilding()
   if not building then
     return nil
