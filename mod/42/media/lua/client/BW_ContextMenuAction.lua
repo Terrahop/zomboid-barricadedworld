@@ -157,7 +157,7 @@ end
 local function contextMenuOptions(playerIndex, context, worldobjects)
   local options = SandboxVars.BarricadedWorld
 
-  -- server players can claim houses to get building protection with the IgnoreClaimed sandbox option enabled
+  -- server players can claim houses to get building protection with the AllowProtectMP sandbox option enabled
   -- and if they are admins
   -- and if they are the coop host
   -- and if they are in single player
